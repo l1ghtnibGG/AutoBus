@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Main Page";
+}
+
+@model IQueryable<UrlModel>;
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="bg-primary text-white fs-4">
+            <tr>
+                <th>Long Url</th>
+                <th>Short Url</th>
+                <th>Create data</th>
+                <th>Visited count</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        @foreach(var url in Model)
+        {
+            <tr>
+                <td>
+                    <form asp-controller="Home" asp-action="IncreaseVisitedCount">
+                        <input type="hidden" name="id" value="@url.Id.ToString()" />
+                        <button type="submit" class="btn btn-link">@url.LongUrl</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="IncreaseVisitedCount">
+                        <input type="hidden" name="id" value="@url.Id.ToString()" />
+                        <button type="submit" class="btn btn-link">@url.ShortUrl</button>
+                    </form>
+                </td>
+                <td>@url.CreateDate</td>
+                <td>@url.ClickCount</td>
+                <td>
+                    <form method="get" asp-controller="Home" asp-action="EditUrl" asp-route-id="@url.Id.ToString()">
+                        <button type="submit" class="btn btn-outline-info">Edit</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-controller="Home" asp-action="DeleteUrl" asp-route-id="@url.Id.ToString()">
+                        <button type="submit" class="btn btn-outline-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

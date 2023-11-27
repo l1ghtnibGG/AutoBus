@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Edit Page";
+}
+
+@model UrlEditDto;
+
+<div class="container">
+    <div class="col-12">
+        <div class="row align-content-center justify-content-center m-auto">
+            <div class="col-lg-7 col-md-10 col-sm-11 col-12 p-lg-5 p-md-5 p-sm-4 p-3 rounded shadow-lg my-5">
+                <h1 class="mb-3 text-center">Edit Url</h1>
+                <form method="post" asp-controller="Home" asp-action="EditUrl">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="@Model.LongUrl">Long Url</label>
+                        <input type="text" asp-for="@Model.LongUrl" class="form-control" value="@Model.LongUrl" />
+                        <span asp-validation-for="@Model.LongUrl" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="@Model.ShortUrl">Short Url</label>
+                        <input type="text" asp-for="@Model.ShortUrl" id="generateUrl" class="form-control" value="@Model.ShortUrl" />
+                        <button id="btnGenerate" class="btn btn-info mt-1">
+                            Generate Short Url
+                            </button>
+                        <span asp-validation-for="@Model.ShortUrl" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="@Model.ClickCount">Click Count</label>
+                        <textarea type="text" asp-for="@Model.ClickCount" class="form-control">@Model.ClickCount</textarea>
+                        <span asp-validation-for="@Model.ClickCount" class="text-danger"></span>
+                    </div>
+                    <div class="row m-auto w-50">
+                        <input type="hidden" asp-for="@Model.Id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-secondary fs-5">Edit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function () {
+        $('#btnGenerate').click(function (e) {
+            e.preventDefault();
+
+            var longUrl = $('#LongUrl').val();
+
+            $.ajax({
+                url: '/Home/GenerateShortUrl',
+                type: 'POST',
+                data: { longUrl: longUrl },
+                success: function (response) {
+                    $('#generateUrl').val(response);
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>

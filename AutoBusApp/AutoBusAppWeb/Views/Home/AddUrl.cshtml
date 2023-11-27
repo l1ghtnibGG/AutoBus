@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Add Url";
+}
+
+@model UrlAddDto;
+
+<div class="container">
+    <div class="col-12">
+        <div class="row align-content-center justify-content-center m-auto">
+            <div class="col-lg-7 col-md-10 col-sm-11 col-12 p-lg-5 p-md-5 p-sm-4 p-3 rounded shadow-lg my-5">
+                <h1 class="mb-3 text-center">Edit Url</h1>
+                <form method="post" asp-controller="Home" asp-action="AddUrl">
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="@Model.LongUrl">Long Url</label>
+                        <input type="text" asp-for="@Model.LongUrl" class="form-control" value="https://" />
+                        <span asp-validation-for="@Model.LongUrl" class="text-danger"></span>
+                    </div>
+                    <div class="row m-auto w-50">
+                        <button type="submit" class="btn btn-secondary fs-5">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
