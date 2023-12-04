@@ -20,13 +20,13 @@
         {
             <tr>
                 <td>
-                    <form asp-controller="Home" asp-action="IncreaseVisitedCount">
+                    <form asp-controller="Home" asp-action="IncreaseVisitedCount" asp-route-url="@url.LongUrl">
                         <input type="hidden" name="id" value="@url.Id.ToString()" />
                         <button type="submit" class="btn btn-link">@url.LongUrl</button>
                     </form>
                 </td>
                 <td>
-                    <form asp-controller="Home" asp-action="IncreaseVisitedCount">
+                    <form asp-controller="Home" asp-action="IncreaseVisitedCount" asp-route-url="@url.LongUrl">
                         <input type="hidden" name="id" value="@url.Id.ToString()" />
                         <button type="submit" class="btn btn-link">@url.ShortUrl</button>
                     </form>

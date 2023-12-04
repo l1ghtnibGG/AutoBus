@@ -4,9 +4,11 @@ using AutoBusAppWeb.Models;
 using AutoMapper;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Diagnostics;
+using System.Net;
 
 namespace AutoBusAppWeb.Controllers
 {
@@ -25,23 +27,27 @@ namespace AutoBusAppWeb.Controllers
         }
 
         [HttpGet("/")]
-        public IActionResult Index()
-        {
-            return View(_urlModelService.GetAll);
-        }
+        public IActionResult Index() => View(_urlModelService.GetAll);
 
-        public IActionResult IncreaseVisitedCount(string id)
+        public IActionResult IncreaseVisitedCount(string id, string url)
         {
             var parseGuid = ParseStringToGuid(id);
 
             if (parseGuid == null)
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", new { message = "Url wasn't found" });
 
             var guidId = (Guid)parseGuid;
 
+            Uri uriResult;
+            bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (!result)
+                return RedirectToAction("Error", new { message = "Incorrect Url entered" });
+
             _urlModelService.IncreaseVisitedCount(guidId);
 
-            return RedirectToAction("Index");
+            return Redirect(url);
         }
 
         [HttpGet("Edit/{id}")]
@@ -50,7 +56,7 @@ namespace AutoBusAppWeb.Controllers
             var parseGuid = ParseStringToGuid(id);
 
             if (parseGuid == null)
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", new { message = "Url wasn't found" });
 
             var guidId = (Guid)parseGuid;
 
@@ -67,12 +73,12 @@ namespace AutoBusAppWeb.Controllers
             var parseGuid = ParseStringToGuid(id);
 
             if (parseGuid == null)
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", new { message = "Url wasn't found" });
 
             var guidId = (Guid)parseGuid;
 
             if (_urlModelService.EditUrl(guidId, urlEdit) == null)
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", new { message = "Url wasn't edited" });
 
             return RedirectToAction("Index");
         }
@@ -83,12 +89,12 @@ namespace AutoBusAppWeb.Controllers
             var parseGuid = ParseStringToGuid(id);
 
             if (parseGuid == null)
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", new { message = "Url wasn't found" });
 
             var guidId = (Guid)parseGuid;
 
             if (_urlModelService.DeleteUrl(guidId) == null)
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", new { message = "Url wasn't deleted" });
 
             return RedirectToAction("Index");
         }
@@ -103,16 +109,14 @@ namespace AutoBusAppWeb.Controllers
         public IActionResult AddUrl([FromForm]UrlAddDto urlAddDto) 
         {
             if (_urlModelService.AddUrl(urlAddDto) == null)
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", new { message = "Url wasn't added" });
 
             return RedirectToAction("Index");
         }
             
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        public IActionResult Error(string message) 
+            => View(new ErrorViewModel { Message = message });
+        
 
         private Guid? ParseStringToGuid(string id)
         {
